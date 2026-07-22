@@ -1,0 +1,4 @@
+vectorstore/
+models/
+*.faiss
+*.pkl
