@@ -56,3 +56,21 @@ def trainmodel():
         "mae": mean_absolute_error(y_test, predictions),
         "rmse": mean_squared_error(y_test, predictions) ** 0.5
     }
+
+
+def predictrevenue(input_features: dict):
+    model = joblib.load(f"{MODEL_DIR}/linear_regression.pkl")
+    scaler = joblib.load(f"{MODEL_DIR}/scaler.pkl")
+    feature_columns = joblib.load(f"{MODEL_DIR}/feature_columns.pkl")
+    
+    # build DataFrame from input
+    df = pd.DataFrame([input_features])
+    # reindex to match training columns
+    df = df.reindex(columns=feature_columns, fill_value=0)
+    # scale numeric columns
+    numeric_cols = ["MonthlyRevenue", "Invoicecount",   "monAvgRev"]
+    df[numeric_cols] = scaler.transform(df[numeric_cols])
+
+    prediction = model.predict(df)
+    return float(prediction[0])
+     
